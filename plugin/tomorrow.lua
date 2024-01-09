@@ -1,1 +1,1 @@
-print(require"tomorrow")
+require"tomorrow"
