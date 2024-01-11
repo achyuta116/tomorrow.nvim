@@ -15,12 +15,12 @@ M.files = {}
 
 -- persist the table in memory somehow
 local _persist = function()
-    local file, err = io.open(vim.fn.stdpath('data') .. "/tomorrow.json", "r+")
+    local file, err = io.open(vim.fn.stdpath('data') .. "/tomorrow.json", "w+")
     local new_content = vim.json.encode(M.files)
     if file then
         file:write(new_content)
     else
-        print("Error Writing to tomorrow.json")
+        print("Error Writing to tomorrow.json: ", err)
     end
 end
 
@@ -48,7 +48,7 @@ end
 local _add_to_files = function(path, comment)
     if not M.files[path] then
         M.files[path] = {
-            comment
+            { comment = comment, time = os.date("%Y-%m-%d %H:%M:%S", os.time()) }
         }
     else
         table.insert(M.files[path], comment)
@@ -65,7 +65,7 @@ end
 local _delete_from_file = function(path, comment)
     local index = nil
     for idx, file_comment in ipairs(M.files[path]) do
-        if file_comment == comment then
+        if file_comment.comment == comment then
             index = idx
             break
         end
@@ -117,8 +117,29 @@ local _get_comments = function(filename)
     return M.files[filename]
 end
 
+M.list_comments = function()
+    local comments = _get_comments(vim.fn.expand("%:p"))
+    if not comments or vim.tbl_count(comments) == 0 then
+        print("No comments available for this file")
+        return
+    end
+
+    local list = vim.tbl_map(function(comment)
+        return comment.time .. " " .. comment.comment
+    end, comments)
+
+    local buffer = vim.api.nvim_create_buf(false, true)
+    if not (buffer == 0) then
+        vim.api.nvim_buf_set_lines(buffer, 0, -1, false, list)
+        vim.api.nvim_command("new | setlocal buftype=nofile | setlocal bufhidden=hide | setlocal noswapfile")
+        vim.api.nvim_command("buffer " .. buffer)
+        vim.api.nvim_command("resize 10")
+    end
+end
+
 vim.api.nvim_set_keymap("n", "<leader>ta", ":lua require('tomorrow').add_comment()<CR>", {})
 vim.api.nvim_set_keymap("n", "<leader>tx", ":lua require('tomorrow').delete_comment()<CR>", {})
+vim.api.nvim_set_keymap("n", "<leader>tl", ":lua require('tomorrow').list_comments()<CR>", {})
 
 _init()
 
