@@ -77,7 +77,6 @@ function M.delete_comment()
         finder = finders.new_table {
             results = M.files[vim.fn.expand("%:p")],
             entry_maker = function(entry)
-                print("From Entry_maker\n")
                 P(entry)
                 return {
                     value = entry.comment,
@@ -169,7 +168,6 @@ function M.setup(config)
         end
     end
 
-    print("config setup")
     config.on_attach()
 end
 
