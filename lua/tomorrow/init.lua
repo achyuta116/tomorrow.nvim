@@ -17,7 +17,6 @@ M.files = {}
 local function _persist()
     local file, err = io.open(vim.fn.stdpath('data') .. "/tomorrow.json", "w")
     local new_content = vim.json.encode(M.files)
-    P(new_content .. "\n")
     if file then
         file:write(new_content)
         file:close()
@@ -57,7 +56,6 @@ local function _delete_from_file(path, comment)
     end
 
     for idx, file_comment in ipairs(comments) do
-        P(file_comment)
         if file_comment.comment == comment then
             index = idx
             break
@@ -70,14 +68,11 @@ local function _delete_from_file(path, comment)
 end
 
 function M.delete_comment()
-    P(M.files[vim.fn.expand("%:p")])
-
     pickers.new(require("telescope.themes").get_dropdown {}, {
         prompt_title = "Delete Comment",
         finder = finders.new_table {
             results = M.files[vim.fn.expand("%:p")],
             entry_maker = function(entry)
-                P(entry)
                 return {
                     value = entry.comment,
                     display = entry.comment,
