@@ -108,16 +108,10 @@ local function _get_relevant_files()
 end
 
 local function _get_comments(filename)
-    return M.files[filename]
+    return { file = filename, comments = M.files[filename] }
 end
 
-function M.list_comments()
-    local comments = _get_comments(vim.fn.expand("%:p"))
-    if not comments or vim.tbl_count(comments) == 0 then
-        print("No comments available for this file")
-        return
-    end
-
+local function _display_comments(comments)
     local list = vim.tbl_map(function(comment)
         return comment.time .. " " .. comment.comment
     end, comments)
@@ -129,6 +123,40 @@ function M.list_comments()
         vim.api.nvim_command("buffer " .. buffer)
         vim.api.nvim_command("resize 10")
     end
+end
+
+local function _display_comments_qf(comments)
+    local qf_comments = {}
+    for _, file_comments in pairs(comments) do
+        for _, comment in ipairs(file_comments.comments) do
+            table.insert(qf_comments, {
+                filename = file_comments.file,
+                text = comment.time .. " " .. comment.comment,
+                type = 'I',
+            })
+        end
+    end
+    vim.fn.setqflist(qf_comments, 'r')
+    vim.cmd("copen")
+end
+
+function M.all_comments()
+    local comments = {}
+    for _, file in pairs(_get_relevant_files()) do
+        local file_comments = _get_comments(file)
+        table.insert(comments, file_comments)
+    end
+    _display_comments_qf(comments)
+end
+
+function M.list_comments()
+    local comments = _get_comments(vim.fn.expand("%:p")).comments
+    if not comments or vim.tbl_count(comments) == 0 then
+        print("No comments available for this file")
+        return
+    end
+
+    _display_comments(comments)
 end
 
 function M.setup(config)
@@ -157,6 +185,7 @@ function M.setup(config)
             vim.api.nvim_set_keymap("n", "<leader>tx", ":lua require('tomorrow').delete_comment()<CR>", {})
             vim.api.nvim_set_keymap("n", "<leader>ta", ":lua require('tomorrow').add_comment()<CR>", {})
             vim.api.nvim_set_keymap("n", "<leader>tl", ":lua require('tomorrow').list_comments()<CR>", {})
+            vim.api.nvim_set_keymap("n", "<leader>tL", ":lua require('tomorrow').all_comments()<CR>", {})
         end
     end
 

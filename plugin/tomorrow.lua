@@ -1,1 +1,3 @@
-require "tomorrow"
+require 'tomorrow'.setup {
+    default = true
+}
