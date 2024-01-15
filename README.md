@@ -35,7 +35,7 @@ require('tomorrow').setup {
 `add_comment`  
 Saves a comment for the open buffer  
 `delete_comment`  
-Opens a finder window which has you select a particular comment to delete 
+Opens a finder window which has you select a particular comment to delete  
 `list_comments`  
 Opens a new window populating lines with comments for the previously open buffer  
 `all_comments`  
