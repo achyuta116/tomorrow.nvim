@@ -25,9 +25,6 @@ local function _persist()
     end
 end
 
-local function _init()
-end
-
 -- a function which adds a (file, comment) to a table
 local function _add_to_files(path, comment)
     local to_insert = { comment = comment, time = os.date("%Y-%m-%d %H:%M:%S", os.time()) }
@@ -155,7 +152,7 @@ function M.setup(config)
         end
     end
 
-    if config.default then
+    if config.default and not config.on_attach then
         function config.on_attach(bufnr)
             vim.api.nvim_set_keymap("n", "<leader>tx", ":lua require('tomorrow').delete_comment()<CR>", {})
             vim.api.nvim_set_keymap("n", "<leader>ta", ":lua require('tomorrow').add_comment()<CR>", {})
