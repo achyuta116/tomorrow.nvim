@@ -32,14 +32,14 @@ require('tomorrow').setup {
 ```
 
 ### Features
-`add_comment` 
+`add_comment`  
 Saves a comment for the open buffer  
-`delete_comment` 
-Opens a finder window which has you select a particular comment to delete
-`list_comments` 
-Opens a new window populating lines with comments for the previously open buffer 
-`all_comments` 
-From the current working directory, opens a quickfix menu populating entries with comments from all files part of the cwd which have comments associated with them
+`delete_comment`  
+Opens a finder window which has you select a particular comment to delete 
+`list_comments`  
+Opens a new window populating lines with comments for the previously open buffer  
+`all_comments`  
+From the current working directory, opens a quickfix menu populating entries with comments from all files part of the cwd which have comments associated with them  
 
 
 ### Contribution
